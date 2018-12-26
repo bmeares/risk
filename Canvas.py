@@ -11,6 +11,15 @@ def draw():
     clear()
     build_map(globals.current_img)
     print(colors.MAP)
+    # out = open("out.txt", "w+")
+    # out.write(colors.MAP)
+
+def america():
+    globals.current_img = globals.america_img
+
+def mexico():
+    globals.current_img = globals.mexico_img
+
 
 def clear():
     os.system("clear")
@@ -57,18 +66,18 @@ def reset_pixels():
 def build_map(img):
     colors.MAP = ""
     ts = os.get_terminal_size()
-    w_ratio = img.width / ts.columns
-    h_ratio = img.height / ts.lines
-    for row in range(ts.lines):
+    w_ratio = img.width / (ts.columns)
+    h_ratio = img.height / (ts.lines)
+    for row in range(ts.lines - 7 ):
         # if row % 2 == 0:
         for col in range(ts.columns):
             r,g,b = img.pixels[int(row * h_ratio)][int(col * w_ratio)].r, img.pixels[int(row * h_ratio)][int(col * w_ratio)].g, img.pixels[int(row * h_ratio)][int(col * w_ratio)].b
             colors.MAP += colors.rgb_ansi(r,g,b, colors.BLOCK)
         colors.MAP += "\n"
 
-def read_image():
-    file = open(config.MAP_LOCATION, "r")
-    file.readline() # ignore magic number
+def read_image(location):
+    file = open(location, "r")
+    file.readline() # ignore magic number, always using P3 for this version
     wh = file.readline().split()
     while "#" in wh: # skip comments
         wh = file.readline().split()
@@ -81,6 +90,8 @@ def read_image():
             r,g,b = int(file.readline()), int(file.readline()), int(file.readline())
             img.pixels[row].append(Pixel(r,g,b))
     file.close()
+    # print(img.pixels[0][0].r)
+    # input()
     return img
 
 def write_image(img):
